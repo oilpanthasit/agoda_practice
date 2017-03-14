@@ -12,19 +12,22 @@ trait SampleRoute extends HttpService {
 
   import spray.httpx.SprayJsonSupport._
   import Stuff._
-  import Email._
+  import RequestData._
   import spray.http.MediaTypes
+  import ResponseData._
 
   implicit def executionContext: ExecutionContextExecutor = actorRefFactory.dispatcher
 
-  var data = List(Stuff(1, "sample1"), Stuff(2, "sample2"))
-
+  def uuid = java.util.UUID.randomUUID.toString
 
   val route = {
     post {
-      path("send"/"email") {
-        entity(as[Email]) { email =>
-          complete(Email(email.sendTo, email.subject, email.body, email.fromName))
+      respondWithMediaType(MediaTypes.`application/json`) {
+        path("send" / "email") {
+          entity(as[RequestData]) { requestData =>
+            RequestData(requestData.sendTo, requestData.subject, requestData.body, requestData.fromName)
+            complete("")
+          }
         }
       }
     }
