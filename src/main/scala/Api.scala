@@ -11,10 +11,8 @@ class SampleServiceActor extends Actor with SampleRoute {
 trait SampleRoute extends HttpService {
 
   import spray.httpx.SprayJsonSupport._
-  import Stuff._
-  import RequestData._
   import spray.http.MediaTypes
-  import ResponseData._
+
 
   implicit def executionContext: ExecutionContextExecutor = actorRefFactory.dispatcher
 
@@ -26,7 +24,8 @@ trait SampleRoute extends HttpService {
         path("send" / "email") {
           entity(as[RequestData]) { requestData =>
             RequestData(requestData.sendTo, requestData.subject, requestData.body, requestData.fromName)
-            complete("")
+            val response = ResponseData(uuid,"success",requestData,"delivered")
+            complete(response)
           }
         }
       }
